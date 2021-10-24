@@ -2,8 +2,11 @@ import "reflect-metadata"
 
 import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import { Guitar } from "./entities/Guitar";
+import { GuitarResolver } from "./resolvers/guitar";
 import { HelloResolver } from './resolvers/HelloResolver'
 import { User } from './entities/User'
+import { UserResolver } from "./resolvers/user";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm"
 import express from 'express'
@@ -17,7 +20,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [User]
+    entities: [User, Guitar]
   });
 
   (await connection).runMigrations()
@@ -26,7 +29,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
+      resolvers: [HelloResolver, UserResolver, GuitarResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res }),

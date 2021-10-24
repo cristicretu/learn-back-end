@@ -6,8 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const apollo_server_express_1 = require("apollo-server-express");
 const apollo_server_core_1 = require("apollo-server-core");
+const Guitar_1 = require("./entities/Guitar");
+const guitar_1 = require("./resolvers/guitar");
 const HelloResolver_1 = require("./resolvers/HelloResolver");
 const User_1 = require("./entities/User");
+const user_1 = require("./resolvers/user");
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const express_1 = __importDefault(require("express"));
@@ -20,13 +23,13 @@ const main = async () => {
         password: "postgres",
         logging: true,
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
-        entities: [User_1.User]
+        entities: [User_1.User, Guitar_1.Guitar]
     });
     (await connection).runMigrations();
     const app = (0, express_1.default)();
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: await (0, type_graphql_1.buildSchema)({
-            resolvers: [HelloResolver_1.HelloResolver],
+            resolvers: [HelloResolver_1.HelloResolver, user_1.UserResolver, guitar_1.GuitarResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ req, res }),

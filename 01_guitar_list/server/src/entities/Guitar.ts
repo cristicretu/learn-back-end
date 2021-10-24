@@ -3,7 +3,7 @@ import { Field, ObjectType } from "type-graphql";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Guitar extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number
@@ -17,15 +17,20 @@ export class User extends BaseEntity {
   updatedAt: Date
 
   @Field()
-  @Column({ unique: true })
-  username!: string
+  @Column()
+  year: number
 
   @Field()
-  @Column({ unique: true })
-  email!: string
-
   @Column()
-  password!: string
+  brand: string
 
-  //OneToMany -> Guitars... todo
+  @Field()
+  @Column()
+  model: string
+
+  @Field()
+  @Column()
+  color: string
+
+  //@ManyToOne(() => User ...... todo
 }
