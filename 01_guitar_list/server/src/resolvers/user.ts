@@ -1,4 +1,4 @@
-import { Arg, Ctx, Field, Mutation, ObjectType, Resolver } from "type-graphql";
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 
 import { User } from "../entities/User";
 import { MyContext } from "../types";
@@ -26,6 +26,15 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  me(@Ctx() { req }: MyContext) {
+    if (!req.session.userId) {
+      return null;
+    }
+
+    return User.findOne(req.session.userId);
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UnsernamePasswordInput,
@@ -83,7 +92,18 @@ export class UserResolver {
       }
     }
 
-    // req.session.userId = user.id
+    req.session.userId = user.id
+
+    // console.log('THIS IS SESSION ---------------------------')
+    // console.log(req.session)
+
+    // console.log("THIS IS USER.ID FROM TYPEORM ----------------------")
+    // console.log(user.id)
+
+    // console.log("THIS IS REQ.SESSION.USERID -----------------------")
+    // console.log(req.session.userId)
+
+    req.session.save(() => { })
 
     return { user }
   }
