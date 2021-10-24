@@ -3,7 +3,6 @@ import "reflect-metadata"
 import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { Guitar } from "./entities/Guitar";
-import { GuitarResolver } from "./resolvers/guitar";
 import { HelloResolver } from './resolvers/HelloResolver'
 import { User } from './entities/User'
 import { UserResolver } from "./resolvers/user";
@@ -29,7 +28,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver, GuitarResolver],
+      resolvers: [HelloResolver, UserResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res }),

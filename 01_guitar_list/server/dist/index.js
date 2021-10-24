@@ -7,7 +7,6 @@ require("reflect-metadata");
 const apollo_server_express_1 = require("apollo-server-express");
 const apollo_server_core_1 = require("apollo-server-core");
 const Guitar_1 = require("./entities/Guitar");
-const guitar_1 = require("./resolvers/guitar");
 const HelloResolver_1 = require("./resolvers/HelloResolver");
 const User_1 = require("./entities/User");
 const user_1 = require("./resolvers/user");
@@ -29,7 +28,7 @@ const main = async () => {
     const app = (0, express_1.default)();
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: await (0, type_graphql_1.buildSchema)({
-            resolvers: [HelloResolver_1.HelloResolver, user_1.UserResolver, guitar_1.GuitarResolver],
+            resolvers: [HelloResolver_1.HelloResolver, user_1.UserResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ req, res }),

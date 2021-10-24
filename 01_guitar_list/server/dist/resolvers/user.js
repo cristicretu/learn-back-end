@@ -8,20 +8,103 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserResolver = void 0;
 const type_graphql_1 = require("type-graphql");
+const User_1 = require("../entities/User");
+const UsernamePasswordInput_1 = require("../utils/UsernamePasswordInput");
+const validateRegister_1 = require("../utils/validateRegister");
+const argon2_1 = __importDefault(require("argon2"));
+let FieldError = class FieldError {
+};
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], FieldError.prototype, "field", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], FieldError.prototype, "message", void 0);
+FieldError = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], FieldError);
+let UserResponse = class UserResponse {
+};
+__decorate([
+    (0, type_graphql_1.Field)(() => [FieldError], { nullable: true }),
+    __metadata("design:type", Array)
+], UserResponse.prototype, "errors", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => User_1.User, { nullable: true }),
+    __metadata("design:type", User_1.User)
+], UserResponse.prototype, "user", void 0);
+UserResponse = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], UserResponse);
 let UserResolver = class UserResolver {
-    user() {
-        return "Hello, World!";
+    async register(options, { req }) {
+        const errors = (0, validateRegister_1.validateRegister)(options);
+        if (errors) {
+            return { errors };
+        }
+        const hashedPassword = await argon2_1.default.hash(options.password);
+        const doesUsernameExist = await User_1.User.findOne({ username: options.username });
+        if (doesUsernameExist) {
+            return {
+                errors: [
+                    {
+                        field: "username",
+                        message: "username already exists"
+                    }
+                ]
+            };
+        }
+        const doesEmailExist = await User_1.User.findOne({ email: options.email });
+        if (doesEmailExist) {
+            return {
+                errors: [
+                    {
+                        field: "email",
+                        message: "email already exists"
+                    }
+                ]
+            };
+        }
+        let user;
+        try {
+            user = await User_1.User.create({
+                email: options.email,
+                username: options.username,
+                password: hashedPassword,
+            }).save();
+        }
+        catch (err) {
+            return {
+                errors: [
+                    {
+                        field: "user-creation",
+                        message: "user could not be created"
+                    }
+                ]
+            };
+        }
+        return { user };
     }
 };
 __decorate([
-    (0, type_graphql_1.Query)(() => String),
+    (0, type_graphql_1.Mutation)(() => UserResponse),
+    __param(0, (0, type_graphql_1.Arg)("options")),
+    __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UserResolver.prototype, "user", null);
+    __metadata("design:paramtypes", [UsernamePasswordInput_1.UnsernamePasswordInput, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "register", null);
 UserResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], UserResolver);
