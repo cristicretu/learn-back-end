@@ -21,6 +21,11 @@ __decorate([
 ], Guitar.prototype, "id", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], Guitar.prototype, "creatorId", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Guitar.prototype, "createdAt", void 0);

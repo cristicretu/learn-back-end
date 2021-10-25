@@ -135,17 +135,23 @@ export class UserResolver {
 
     req.session.userId = user.id
 
-    // console.log('THIS IS SESSION ---------------------------')
-    // console.log(req.session)
-
-    // console.log("THIS IS USER.ID FROM TYPEORM ----------------------")
-    // console.log(user.id)
-
-    // console.log("THIS IS REQ.SESSION.USERID -----------------------")
-    // console.log(req.session.userId)
-
-    req.session.save(() => { })
-
     return { user }
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie('qid')
+
+        if (err) {
+          console.log(err)
+          resolve(false)
+          return;
+        }
+
+        resolve(true)
+      })
+    )
   }
 }

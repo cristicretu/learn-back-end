@@ -9,6 +9,10 @@ export class Guitar extends BaseEntity {
   id!: number
 
   @Field()
+  @Column()
+  creatorId: number
+
+  @Field()
   @CreateDateColumn()
   createdAt: Date
 
