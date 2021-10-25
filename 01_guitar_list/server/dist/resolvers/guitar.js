@@ -38,10 +38,20 @@ GuitarInput = __decorate([
     (0, type_graphql_1.InputType)()
 ], GuitarInput);
 let GuitarResolver = class GuitarResolver {
+    guitar(id) {
+        return Guitar_1.Guitar.findOne(id);
+    }
     async createGuitar(input, { req }) {
         return Guitar_1.Guitar.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
     }
 };
+__decorate([
+    (0, type_graphql_1.Query)(() => Guitar_1.Guitar, { nullable: true }),
+    __param(0, (0, type_graphql_1.Arg)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], GuitarResolver.prototype, "guitar", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Guitar_1.Guitar),
     (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),

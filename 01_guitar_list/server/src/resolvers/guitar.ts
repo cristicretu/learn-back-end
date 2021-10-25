@@ -20,6 +20,13 @@ class GuitarInput {
 
 @Resolver()
 export class GuitarResolver {
+  @Query(() => Guitar, { nullable: true })
+  guitar(
+    @Arg("id") id: number
+  ): Promise<Guitar | undefined> {
+    return Guitar.findOne(id)
+  }
+
   @Mutation(() => Guitar)
   @UseMiddleware(isAuth)
   async createGuitar(
