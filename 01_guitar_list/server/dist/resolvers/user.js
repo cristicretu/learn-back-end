@@ -54,6 +54,34 @@ let UserResolver = class UserResolver {
         }
         return User_1.User.findOne(req.session.userId);
     }
+    async login(UsernameOrEmail, password, { req }) {
+        const user = await User_1.User.findOne(UsernameOrEmail.includes('@')
+            ? { where: { email: UsernameOrEmail } }
+            : { where: { username: UsernameOrEmail } });
+        if (!user) {
+            return {
+                errors: [
+                    {
+                        field: "usernameOrEmail",
+                        message: "username or email doesn't exist"
+                    }
+                ]
+            };
+        }
+        const validPassword = await argon2_1.default.verify(user.password, password);
+        if (!validPassword) {
+            return {
+                errors: [
+                    {
+                        field: "password",
+                        message: "incorect password"
+                    }
+                ]
+            };
+        }
+        req.session.userId = user.id;
+        return { user };
+    }
     async register(options, { req }) {
         const errors = (0, validateRegister_1.validateRegister)(options);
         if (errors) {
@@ -112,6 +140,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "me", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => UserResponse),
+    __param(0, (0, type_graphql_1.Arg)("UsernameOrEmail")),
+    __param(1, (0, type_graphql_1.Arg)("password")),
+    __param(2, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "login", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)("options")),

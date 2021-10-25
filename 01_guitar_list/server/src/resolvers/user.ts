@@ -36,6 +36,47 @@ export class UserResolver {
   }
 
   @Mutation(() => UserResponse)
+  async login(
+    @Arg("UsernameOrEmail") UsernameOrEmail: string,
+    @Arg("password") password: string,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    const user = await User.findOne(
+      UsernameOrEmail.includes('@')
+        ? { where: { email: UsernameOrEmail } }
+        : { where: { username: UsernameOrEmail } }
+    )
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "usernameOrEmail",
+            message: "username or email doesn't exist"
+          }
+        ]
+      }
+    }
+
+    const validPassword = await argon2d.verify(user.password, password)
+
+    if (!validPassword) {
+      return {
+        errors: [
+          {
+            field: "password",
+            message: "incorect password"
+          }
+        ]
+      }
+    }
+
+    req.session.userId = user.id
+
+    return { user }
+  }
+
+  @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UnsernamePasswordInput,
     @Ctx() { req }: MyContext
