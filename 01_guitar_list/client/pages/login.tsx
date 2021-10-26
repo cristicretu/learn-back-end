@@ -10,15 +10,33 @@ const Login: React.FC<Record<string, never>> = () => {
   const [login] = useLoginMutation()
 
   return (<Container>
-    <Formik initialValues={{ UsernameOrEmail: "", password: "" }}
+    <Formik
+      initialValues={{ UsernameOrEmail: "", password: "" }}
       onSubmit={async (values, { setErrors }) => {
         const response = await login({
-          variables: values
-        })
-
-        // errors....?
-
-        router.push("/")
+          variables: values,
+          update: (cache, { data }) => {
+            cache.writeQuery<MeQuery>({
+              query: MeDocument,
+              data: {
+                __typename: "Query",
+                me: data?.login.user,
+              },
+            });
+            cache.evict({ fieldName: "posts:{}" });
+          },
+        });
+        if (response.data?.login.errors) {
+          console.log(response.data.login.errors)
+          // setErrors(toErrorMap(response.data.login.errors));
+        } else if (response.data?.login.user) {
+          if (typeof router.query.next === "string") {
+            router.push(router.query.next);
+          } else {
+            // worked
+            router.push("/");
+          }
+        }
       }}
     >
       {/* {({ isSubmitting }) => ( */}
