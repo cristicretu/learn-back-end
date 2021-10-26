@@ -7,12 +7,14 @@ import { useRouter } from "next/dist/client/router";
 const Login: React.FC<Record<string, never>> = () => {
   const router = useRouter()
 
-  const [, login] = useLoginMutation()
+  const [login] = useLoginMutation()
 
   return (<Container>
     <Formik initialValues={{ UsernameOrEmail: "", password: "" }}
       onSubmit={async (values, { setErrors }) => {
-        const response = await login(values)
+        const response = await login({
+          variables: values
+        })
 
         // errors....?
 
