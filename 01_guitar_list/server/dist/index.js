@@ -34,7 +34,11 @@ const main = async () => {
     const app = (0, express_1.default)();
     const RedisStore = (0, connect_redis_1.default)(express_session_1.default);
     const redis = new ioredis_1.default();
-    app.use((0, cors_1.default)({}));
+    app.set("trust proxy", 1);
+    app.use((0, cors_1.default)({
+        origin: "http://localhost:3000",
+        credentials: true,
+    }));
     app.use((0, express_session_1.default)({
         name: "qid",
         store: new RedisStore({
@@ -56,7 +60,7 @@ const main = async () => {
             resolvers: [HelloResolver_1.HelloResolver, guitar_1.GuitarResolver, user_1.UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ req, res }),
+        context: ({ req, res }) => ({ req, res, redis }),
         plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground)()],
     });
     await apolloServer.start();

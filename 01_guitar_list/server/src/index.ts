@@ -38,10 +38,12 @@ const main = async () => {
   const RedisStore = connectRedis(session)
   const redis = new Redis()
 
+  app.set("trust proxy", 1)
+
   app.use(
     cors({
-      // origin: "http://localhost:3000",
-      // credentials: true,
+      origin: "http://localhost:3000",
+      credentials: true,
     })
   )
 
@@ -69,7 +71,7 @@ const main = async () => {
       resolvers: [HelloResolver, GuitarResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ req, res }),
+    context: ({ req, res }): MyContext => ({ req, res, redis }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
 

@@ -1,11 +1,13 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 
 import Container from "components/Container";
-import { InputField } from "components/InputField";
 import { useRegisterMutation } from "generated/graphql";
 import { useRouter } from "next/dist/client/router";
+import { withApollo } from "utils/withApollo";
 
-const Login: React.FC<Record<string, never>> = () => {
+interface registerProps { }
+
+const Register: React.FC<registerProps> = () => {
   const router = useRouter()
 
   const [register] = useRegisterMutation()
@@ -13,10 +15,16 @@ const Login: React.FC<Record<string, never>> = () => {
   return (<Container>
     <Formik
       initialValues={{ email: "", username: "", password: "" }}
-      onSubmit={async (values, actions) => {
-        const response = await register({ values })
-
-        // router.push("/")
+      onSubmit={async (values) => {
+        // const response = await register({ variables: { values } });
+        const response = await register({ variables: { username: values.username, password: values.password, email: values.email } })
+        if (response.data?.register.errors) {
+          // setErrors(toErrorMap(response.data.register.errors));
+          console.log("some hecking error dud")
+        } else if (response.data?.register.user) {
+          // worked
+          router.push("/");
+        }
       }}
     >
       <Form className="flex flex-col space-y-4">
@@ -40,4 +48,4 @@ const Login: React.FC<Record<string, never>> = () => {
   </Container>);
 }
 
-export default Login
+export default withApollo({ ssr: false })(Register);
