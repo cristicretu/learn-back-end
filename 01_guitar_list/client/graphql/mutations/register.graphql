@@ -13,5 +13,3 @@ mutation Register($username: String!, $email: String!, $password: String!) {
     }
   }
 }
-
-    # options: { username: "edwfgrrtttgewfgwldo", email: "rerjteedfgqwdonwewdddaffld@", password: "itsme" }

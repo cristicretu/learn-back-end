@@ -5,9 +5,7 @@ import { useRegisterMutation } from "generated/graphql";
 import { useRouter } from "next/dist/client/router";
 import { withApollo } from "utils/withApollo";
 
-interface registerProps { }
-
-const Register: React.FC<registerProps> = () => {
+const Register: React.FC<Record<string, string>> = () => {
   const router = useRouter()
 
   const [register] = useRegisterMutation()
@@ -16,11 +14,9 @@ const Register: React.FC<registerProps> = () => {
     <Formik
       initialValues={{ email: "", username: "", password: "" }}
       onSubmit={async (values) => {
-        // const response = await register({ variables: { values } });
         const response = await register({ variables: { username: values.username, password: values.password, email: values.email } })
         if (response.data?.register.errors) {
           // setErrors(toErrorMap(response.data.register.errors));
-          console.log("some hecking error dud")
         } else if (response.data?.register.user) {
           // worked
           router.push("/");
@@ -48,4 +44,4 @@ const Register: React.FC<registerProps> = () => {
   </Container>);
 }
 
-export default withApollo({ ssr: false })(Register);
+export default withApollo({ ssr: false })(Register)

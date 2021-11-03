@@ -27,12 +27,12 @@ export default function Container(props: any) {
     setMounted(true);
   }, []);
 
-  useKeypress('t', () => {
-    if (Mounted === true) setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  });
-  useKeypress('h', () => {
-    router.back();
-  });
+  // useKeypress('t', () => {
+  //   if (Mounted === true) setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  // });
+  // useKeypress('h', () => {
+  //   router.back();
+  // });
 
   return (
     <div className='bg-white dark:bg-gray-900'>
