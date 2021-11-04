@@ -11,6 +11,7 @@ const Login: React.FC<Record<string, never>> = () => {
   const [login] = useLoginMutation()
 
   return (<Container>
+    <h1 className="text-2xl font-bold">Login</h1>
     <Formik
       initialValues={{ UsernameOrEmail: "", password: "" }}
       onSubmit={async (values) => {

@@ -11,6 +11,7 @@ const Register: React.FC<Record<string, string>> = () => {
   const [register] = useRegisterMutation()
 
   return (<Container>
+    <h1 className="text-2xl font-bold">Register</h1>
     <Formik
       initialValues={{ email: "", username: "", password: "" }}
       onSubmit={async (values) => {
