@@ -1,12 +1,15 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 
 import Container from "components/Container";
+import { useApolloClient } from "@apollo/client";
 import { useLoginMutation } from "generated/graphql";
 import { useRouter } from "next/dist/client/router";
 import { withApollo } from "utils/withApollo";
 
 const Login: React.FC<Record<string, never>> = () => {
   const router = useRouter()
+
+  const apolloClient = useApolloClient();
 
   const [login] = useLoginMutation()
 
@@ -20,6 +23,9 @@ const Login: React.FC<Record<string, never>> = () => {
           // setErrors(toErrorMap(response.data.register.errors));
         } else if (response.data?.login.user) {
           // worked
+
+          //invalidate cache
+          apolloClient.resetStore()
           router.push("/");
         }
       }}

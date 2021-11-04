@@ -11,7 +11,7 @@
     "clsx": "^1.1.1",
     "eslint-config-prettier": "^8.3.0",
     "formik": "^2.2.9",
-    "graphql": "^16.0.1",
+    "graphql": "^15.6.1",
     "graphql-tag": "^2.12.5",
     "next": "latest",
     "next-apollo": "^5.0.7",

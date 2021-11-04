@@ -60,7 +60,7 @@ const main = async () => {
             resolvers: [HelloResolver_1.HelloResolver, guitar_1.GuitarResolver, user_1.UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ req, res, redis }),
+        context: ({ req, res }) => ({ req, res }),
         plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground)()],
     });
     await apolloServer.start();

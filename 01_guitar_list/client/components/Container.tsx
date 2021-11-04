@@ -3,9 +3,12 @@ import React, { useEffect, useState } from 'react';
 import Footer from 'components/Footer';
 import Head from 'next/head';
 import Link from 'next/link';
+import { isServer } from 'utils/isServer';
 import useKeypress from 'react-use-keypress';
+import { useMeQuery } from 'generated/graphql';
 import { useRouter } from 'next/dist/client/router';
 import { useTheme } from 'next-themes';
+import { withApollo } from 'utils/withApollo';
 
 const Container = (props: any) => {
   const [Mounted, setMounted] = useState<boolean>(false);
@@ -13,6 +16,12 @@ const Container = (props: any) => {
 
   const { children, ...customMeta } = props;
   const router = useRouter();
+
+  const { data, loading, error } = useMeQuery({
+    variables: {
+    },
+    skip: isServer(),
+  });
 
   const meta = {
     title: 'Template name',
@@ -33,6 +42,25 @@ const Container = (props: any) => {
   // useKeypress('h', () => {
   //   router.back();
   // });
+
+  let navbar: JSX.Element
+  if (loading) {
+    //
+  }
+  else if (!data?.me) {
+    navbar = (<div><Link href='/register'>
+      <a className='text-gray-600 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-300'>
+        Register
+      </a>
+    </Link>
+      <Link href='/login'>
+        <a className='text-gray-600 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-300'>
+          Login
+        </a>
+      </Link></div>)
+  } else {
+    navbar = (<p>{data.me.username}</p>)
+  }
 
   return (
     <div className='bg-white dark:bg-gray-900'>
@@ -63,19 +91,11 @@ const Container = (props: any) => {
               Home
             </a>
           </Link>
-          <Link href='/register'>
-            <a className='text-gray-600 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-300'>
-              Register
-            </a>
-          </Link>
-          <Link href='/login'>
-            <a className='text-gray-600 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-300'>
-              Login
-            </a>
-          </Link>
+
+          {navbar}
         </div>
 
-        <p>username</p>
+
       </nav>
       <main id='skip' className='flex flex-col  justify-center px-2'>
         <div className='my-24 mx-auto text-gray-900 dark:text-gray-100'>{children}</div>
@@ -85,4 +105,4 @@ const Container = (props: any) => {
   );
 }
 
-export default Container
+export default withApollo({ ssr: false })(Container)

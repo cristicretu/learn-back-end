@@ -1,4 +1,4 @@
-import { Arg, Ctx, Field, Int, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 
 import { User } from "../entities/User";
 import { MyContext } from "../types";
@@ -26,11 +26,6 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-  @Query(() => User, { nullable: true })
-  User(@Arg("id", () => Int) id: number): Promise<User | undefined> {
-    return User.findOne(id)
-  }
-
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
     if (!req.session.userId) {
